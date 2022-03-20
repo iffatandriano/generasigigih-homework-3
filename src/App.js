@@ -1,23 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+// import logo from "./logo.svg";
+import { useEffect, useState } from "react";
+// import "./App.css";
+import { getTokenFromResponse } from "./spotify";
+import Login from "./login";
+import Playlist from "./playlist";
 
 function App() {
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    document.title = "PLAYLIST SPOTIFY";
+    const hash = getTokenFromResponse();
+    window.location.hash = "";
+    let _token = hash.access_token;
+
+    if (_token) {
+      setToken(_token);
+      localStorage.setItem("access_token", _token);
+    }
+    console.log("my token : ", token);
+  }, [token]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {!token && <Login />}
+      {token && <Playlist spotify={token} />}
     </div>
   );
 }
